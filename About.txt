@@ -1,0 +1,2 @@
+Aşağıdaki komut ile ProductsAPI klasörü oluşturularak içinde webapi projesi oluşturulur.
+dotnet new webapi -o ProductsAPI
