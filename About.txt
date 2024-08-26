@@ -17,3 +17,49 @@ Bu komutun çalışmasından sonra projeadi.csproj dosyasında sqlite'in projeye
 Daha sonra Design paketini projeye yüklememiz lazım proje dizini içersine(Program.cs'nin olduğu klasör) bu komut ile :
 
 dotnet add package Microsoft.EntityFrameworkCore.Design
+
+------------------------------------------------------------------------------------------------------------------------
+
+Ardından Program.cs içersine var builder = WebApplication.CreateBuilder(args); hemen sonra
+
+builder.Services.AddDbContext<ProductsContext>(x => x.UseSqlite("Data Source = products.Db"));
+
+
+-------------------------------------------------------------------------------------------------------------------
+daha sonra kontrol etmek için 
+
+dotnet build
+
+komutu ile kontrol edilir
+---------------------------------------------------------------------------------------------------------------------
+
+dotnet ef migrations add InitialCreate
+
+komutu ile yeni migrations oluştururuz. InitialCreate ismi keyfi
+
+
+-------------------------------------------------------------------------------------------------------------------
+Ef tools eski ise güncelleme yapılabilir
+dotnet tool update --global dotnet-ef
+
+
+---------------------------------------------------------------------------------------------------------------------------
+Şimdi veritabanına aktarma zamanı. Bu kod ile migrations ile veritabaına aktarılır:
+
+dotnet ef database update
+---------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

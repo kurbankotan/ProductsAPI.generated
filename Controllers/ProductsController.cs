@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using ProductsAPI.Models;
 
 namespace ProductsAPI.Controllers
@@ -8,33 +9,22 @@ namespace ProductsAPI.Controllers
     [Route("api/[controller]")]
     public class ProductsController:ControllerBase
     {
-        private static List<Product>? _products;
+        private readonly ProductsContext _context;
 
 
-        public ProductsController()
+        public ProductsController(ProductsContext context)
         {
-            _products = new List<Product>
-            {
-                new()  { ProductID = 1, ProductName = "IPhone 14", Price = 60000, IsActive = true },
-                new()  { ProductID = 2, ProductName = "IPhone 15", Price = 70000, IsActive = true },
-
-                new()  { ProductID = 3, ProductName = "IPhone 16", Price = 80000, IsActive = true },
-                new()  { ProductID = 4, ProductName = "IPhone 17", Price = 90000, IsActive = true }
-            };
+            _context = context;
         }
 
 
         //Tüm ürünleri getirir
         //localhost:7201/api/products => GET
         [HttpGet]
-        public IActionResult GetProducts()
+        public async Task<IActionResult> GetProducts()
         {
-            if(_products == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(_products);
+            var products = await _context.Products.ToListAsync();
+            return Ok(products);
         }
 
 
@@ -44,14 +34,15 @@ namespace ProductsAPI.Controllers
         //localhost:7201/api/products/1 => GET
 
         [HttpGet("{id}")]                                 //[HttpGet("api/[controller]/{id}")] şeklinde de yazılabilir
-        public IActionResult GetProducts(int? id)
+        public async Task<IActionResult> GetProduct(int? id)
         {
             if(id== null)
             {
                 return NotFound();
             }
 
-            var p = _products?.FirstOrDefault(i=>i.ProductID==id);
+            var p = await _context.Products.FirstOrDefaultAsync(i=>i.ProductID==id);
+
 
             if(p== null)
             {
@@ -60,6 +51,19 @@ namespace ProductsAPI.Controllers
 
             return Ok(p);
  
+        }
+
+
+
+
+        [HttpPost]
+        public async Task<IActionResult> CreateProduct(Product entity)
+        {
+            _context.Products.Add(entity);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetProduct), new { id = entity.ProductID }, entity); // Ürün eklendikten sonra kendisine ürün ile ilgili geridönüş yapılması için
+
         }
 
 
