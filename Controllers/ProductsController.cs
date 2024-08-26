@@ -103,6 +103,41 @@ namespace ProductsAPI.Controllers
 
 
 
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteProduct(int? id)
+        {
+            if(id == null)
+            {
+                return NotFound();
+            }
+
+            var product = await _context.Products.FirstOrDefaultAsync(p=> p.ProductID==id);
+
+            if(product == null)
+            {
+                return NotFound();
+            }
+
+            _context.Products.Remove(product);
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                return NotFound();
+            }
+
+            return NoContent(); //200'lü durum. 204 herşey normal. Silme yapıldı demek
+
+        }
+
+
+
+
+
+
 
 
 
