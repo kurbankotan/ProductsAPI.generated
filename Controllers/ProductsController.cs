@@ -24,22 +24,49 @@ namespace ProductsAPI.Controllers
         }
 
 
-
+        //Tüm ürünleri getirir
         //localhost:7201/api/products => GET
         [HttpGet]
-        public List<Product> GetProducts()
+        public IActionResult GetProducts()
         {
-            return _products ?? new List<Product>() ;
+            if(_products == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(_products);
         }
 
 
+
+
+        //Id'ye göre tek ürün getirir
         //localhost:7201/api/products/1 => GET
 
         [HttpGet("{id}")]                                 //[HttpGet("api/[controller]/{id}")] şeklinde de yazılabilir
-        public Product GetProducts(int id)
+        public IActionResult GetProducts(int? id)
         {
-            return _products?.FirstOrDefault(i=>i.ProductID==id) ?? new Product();
+            if(id== null)
+            {
+                return NotFound();
+            }
+
+            var p = _products?.FirstOrDefault(i=>i.ProductID==id);
+
+            if(p== null)
+            {
+                return NotFound();
+            }
+
+            return Ok(p);
+ 
         }
+
+
+
+
+
+
 
 
 
