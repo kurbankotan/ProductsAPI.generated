@@ -67,6 +67,44 @@ namespace ProductsAPI.Controllers
         }
 
 
+        //localhost:7201/api/products/1 => PUT
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateProduct(int id, Product entity)
+        {
+            if (id != entity.ProductID)
+            {
+                return BadRequest(); //400'lü hata gönder. Yanlış kullanma
+            }
+
+            var product = await _context.Products.FirstOrDefaultAsync(p=>p.ProductID==id);
+            if (product == null)
+            {
+                return NotFound();            
+            }
+
+            product.ProductName = entity.ProductName;
+            product.Price = entity.Price;
+            product.IsActive = entity.IsActive;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                return NotFound();
+            }
+
+
+            return NoContent(); //200'lü durum. 204 herşey normal. Güncelleme yapıldı demek
+
+        }
+
+
+
+
+
+
 
 
 
