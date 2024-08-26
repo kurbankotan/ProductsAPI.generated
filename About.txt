@@ -1,2 +1,19 @@
 Aşağıdaki komut ile ProductsAPI klasörü oluşturularak içinde webapi projesi oluşturulur.
 dotnet new webapi -o ProductsAPI
+
+
+--------------------------------------------------------------------------------------------------
+Entity Framework'ü projeye eklemek için Program.cs olan klasöre terminali konumlandırıp aşağıdaki kodu çalıştır
+
+dotnet add package Microsoft.EntityFrameworkCore.Sqlite
+
+
+Bu komutun çalışmasından sonra projeadi.csproj dosyasında sqlite'in projeye kurulumunu gösteren kodun eklenmiş olduğunu göreceğiz
+
+
+
+------------------------------------------------------------------------------------------------------------------------
+
+Daha sonra Design paketini projeye yüklememiz lazım proje dizini içersine(Program.cs'nin olduğu klasör) bu komut ile :
+
+dotnet add package Microsoft.EntityFrameworkCore.Design
