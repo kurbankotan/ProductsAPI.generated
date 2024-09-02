@@ -57,12 +57,38 @@ Komut çalıştırıldıktan sonra IdentityApp.csproj dosyasında Identity'nin e
 
 ----------------------------------------------------------------------------------------------------------------------------
 
+migrations için:
+
+dotnet ef migrations add IdentityTables
+
+ardından update:
+
+dotnet ef database update
+
+---------------------------------------------------------------------------------------------------------------------------
+Token oluşturmak için yüklenecek paketler. www.nuget.org üzerinde jwt aratılır. Çıkanlar arasında:
+1-System.IdentityModel.Tokens.Jwt
+2-Microsoft.AspNetCore.Authentication.JwtBearer
 
 
 
 
+1. için komut:
+dotnet add package System.IdentityModel.Tokens.Jwt
+
+2. için komut:
+dotnet add package Microsoft.AspNetCore.Authentication.JwtBearer
 
 
+----------------------------------------------------------------------------------------------------------------------------------
+"generate secret key" kelimelerini aratıp bir siteden secret key oluşturulur. Kendiniz de yazabilirsiniz. örnek:
+
+https://generate.plus/en/hex/secret-key
+----------------------------------------------------------------------------------------------------------------------------------
+Oluşturulan token'ı encode edip görebiliriz. Mesela bu site üzerinden:
+
+https://jwt.io/
+----------------------------------------------------------------------------------------------------------------------------------
 
 
 
