@@ -1,6 +1,12 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using ProductsAPI.Models;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +19,7 @@ builder.Services.AddIdentity<AppUser, AppRole>().AddEntityFrameworkStores<Produc
 
 
 builder.Services.Configure<IdentityOptions>(options =>{
+
     options.Password.RequiredLength = 6;
     options.Password.RequireNonAlphanumeric = false;
     options.Password.RequireLowercase = false;
@@ -26,9 +33,60 @@ builder.Services.Configure<IdentityOptions>(options =>{
     options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
 });
 
+builder.Services.AddAuthentication(options => {
+
+                                          options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                                          options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer( options =>
+                        {
+                            options.RequireHttpsMetadata = false;
+                            options.TokenValidationParameters = new TokenValidationParameters
+                            {
+                                ValidateIssuer = false,
+                                ValidIssuer = "kurbankotan.com",    //Hangi firma tarafýndan
+                                ValidateAudience = false,
+                                ValidAudience = "",                        //Kimin için
+                                ValidAudiences = new string[] {"a","b"},    //veya kimler için geliþtirilmiþ
+                                ValidateIssuerSigningKey = true,            //En önemli kýsým bu. Validate edilen kýsým
+                                IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration.GetSection("AppSettings:Secret").Value ?? "")),
+                                ValidateLifetime = true
+                            };
+                        });
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
+
+//Swagger'da login için 
+builder.Services.AddSwaggerGen(option =>
+{
+    option.SwaggerDoc("v1", new OpenApiInfo { Title = "Demo API", Version = "v1" });
+    option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = "Please enter a valid token",
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        BearerFormat = "JWT",
+        Scheme = "Bearer"
+    });
+    option.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type=ReferenceType.SecurityScheme,
+                    Id="Bearer"
+                }
+            },
+            new string[]{}
+        }
+    });
+});
+
+
 
 var app = builder.Build();
 
@@ -40,6 +98,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+//Token için Authentication middleware'in eklenmesi lazým
+app.UseAuthentication();
+
 app.UseAuthorization();
 app.MapControllers();
 
