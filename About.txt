@@ -48,6 +48,14 @@ dotnet tool update --global dotnet-ef
 
 dotnet ef database update
 ---------------------------------------------------------------------------------------------------------------------------
+Projeye Identity ekle(ProductsAPI.csproj dosyasına konumlandıktan sonra):
+
+dotnet add package Microsoft.AspNetCore.Identity.EntityFrameworkCore
+
+
+Komut çalıştırıldıktan sonra IdentityApp.csproj dosyasında Identity'nin eklendiğine dair satır görünür.
+
+----------------------------------------------------------------------------------------------------------------------------
 
 
 
