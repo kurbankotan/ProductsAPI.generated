@@ -24,14 +24,10 @@ namespace ProductsAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetProducts()
         {
-            var products = await _context.Products.Where(i=>i.IsActive == true).Select(p=>new ProductDTO
-            {
-
-                ProductID = p.ProductID,
-                ProductName = p.ProductName,
-                Price = p.Price
-
-            }).ToListAsync();
+            var products = await _context.Products
+                                                  .Where(i=>i.IsActive == true)
+                                                  .Select(p => ProductToDTO(p))
+                                                  .ToListAsync();
 
             return Ok(products);
         }
@@ -52,12 +48,7 @@ namespace ProductsAPI.Controllers
 
             var p = await _context
                                  .Products
-                                 .Select(p=> new ProductDTO
-                                 {
-                                     ProductID = p.ProductID,
-                                     ProductName = p.ProductName,
-                                     Price = p.Price
-                                 })
+                                 .Select(p=> ProductToDTO(p))
                                  .FirstOrDefaultAsync(i=>i.ProductID==id);
 
 
@@ -153,7 +144,15 @@ namespace ProductsAPI.Controllers
 
 
 
-
+        private static ProductDTO ProductToDTO(Product p)
+        {
+            return new ProductDTO
+            {
+                ProductID = p.ProductID,
+                ProductName = p.ProductName,
+                Price = p.Price
+            };
+        }
 
 
 
