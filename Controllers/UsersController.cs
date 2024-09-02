@@ -9,11 +9,13 @@ namespace ProductsAPI.Controllers
     [Route("api/[controller]")]
     public class UsersController:ControllerBase
     {
-        private UserManager<AppUser> _userManager;
+        private readonly UserManager<AppUser> _userManager;
+        private readonly SignInManager<AppUser> _singInManager;
 
-        public UsersController(UserManager<AppUser> userManager)
+        public UsersController(UserManager<AppUser> userManager, SignInManager<AppUser> singInManager)
         {
             _userManager = userManager;
+            _singInManager = singInManager;
         }
 
 
@@ -45,7 +47,38 @@ namespace ProductsAPI.Controllers
 
         }
 
+
+        public async Task<IActionResult> Login(loginDTO model)
+        {
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null)
+            {
+                return BadRequest(new {message = "Email Hatalı"});
+            }
+
+            var result = await _singInManager.CheckPasswordSignInAsync(user, model.Password,false);
+            if (result.Succeeded)
+            {
+                return Ok(new { token = "token" }
+                );
+            }
+
+            return Unauthorized();
+        }
+
+
+
+
+
+
+
+
     }
+
+
+
+
+
 
 
 
