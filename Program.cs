@@ -10,8 +10,20 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+//CORS için service ekleme
+var MyAllowSpecificOrigions = "_myAllowSpecificOrigions";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(MyAllowSpecificOrigions, policy =>
+    {
+        policy.WithOrigins("http://127.0.0.1:5500")     //Api üzerinden veri çekecek olan. Deðiþtir
+                                                   .AllowAnyHeader()        //Tüm header'a izin ver
+                                                   .AllowAnyMethod();       //Tüm metotlara izin ver
+    });
+});
+
+
 
 builder.Services.AddDbContext<ProductsContext>(x => x.UseSqlite("Data Source = products.db"));
 
@@ -101,6 +113,12 @@ app.UseHttpsRedirection();
 
 //Token için Authentication middleware'in eklenmesi lazým
 app.UseAuthentication();
+
+app.UseRouting();
+
+//CORS için
+app.UseCors(MyAllowSpecificOrigions);  //Statik dosyalar varsa. UseStatik'ten önce tanýmlanmaslý
+
 
 app.UseAuthorization();
 app.MapControllers();
